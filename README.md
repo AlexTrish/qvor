@@ -1,5 +1,3 @@
-<p align="center"><img src="https://i.ibb.co/GYGz2BK/Banner.png" alt="QVOR Banner" width="726"></p>
-
 <p align="center">
   <a href="https://nextjs.org/"><img alt="Next.js" src="https://img.shields.io/badge/framework-Next.js%2016-black?style=flat&logo=next.js"></a>
   <a href="https://www.typescriptlang.org/"><img alt="TypeScript" src="https://img.shields.io/badge/language-TypeScript%205-blue?style=flat&logo=typescript"></a>
