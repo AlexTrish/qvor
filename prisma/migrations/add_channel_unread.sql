@@ -1,0 +1,2 @@
+ALTER TABLE channel_members ADD COLUMN IF NOT EXISTS unread_count INT NOT NULL DEFAULT 0;
+ALTER TABLE channel_members ADD COLUMN IF NOT EXISTS last_read_at TIMESTAMPTZ;

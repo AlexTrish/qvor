@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Код авторизации QVOR</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+    .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .header { background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%); padding: 40px 32px; text-align: center; }
+    .logo { font-size: 32px; font-weight: 900; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .tagline { color: rgba(255,255,255,0.7); font-size: 14px; font-weight: 500; }
+    .content { padding: 40px 32px; }
+    .title { font-size: 24px; font-weight: 700; color: #0a0a0a; margin-bottom: 16px; letter-spacing: -0.01em; }
+    .text { font-size: 15px; line-height: 1.6; color: #525252; margin-bottom: 32px; }
+    .code-box { background: #fafafa; border: 2px solid #e5e5e5; border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 32px; }
+    .code { font-size: 36px; font-weight: 800; letter-spacing: 8px; color: #0a0a0a; font-family: 'Courier New', monospace; }
+    .expiry { font-size: 13px; color: #737373; margin-top: 12px; }
+    .warning { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; border-radius: 8px; margin-bottom: 32px; }
+    .warning-text { font-size: 14px; color: #92400e; line-height: 1.5; }
+    .footer { background: #fafafa; padding: 32px; text-align: center; border-top: 1px solid #e5e5e5; }
+    .footer-text { font-size: 13px; color: #737373; line-height: 1.6; margin-bottom: 16px; }
+    .footer-link { color: #0a0a0a; text-decoration: none; font-weight: 600; }
+    .footer-link:hover { text-decoration: underline; }
+    @media (max-width: 600px) {
+      .container { border-radius: 0; }
+      .header, .content, .footer { padding: 24px 20px; }
+      .code { font-size: 28px; letter-spacing: 6px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">QVOR</div>
+      <div class="tagline">Secure Messaging Service</div>
+    </div>
+    
+    <div class="content">
+      <h1 class="title">Код авторизации</h1>
+      <p class="text">
+        Вы запросили код для входа в QVOR. Используйте код ниже для завершения авторизации:
+      </p>
+      
+      <div class="code-box">
+        <div class="code">{{CODE}}</div>
+        <div class="expiry">Действителен 5 минут</div>
+      </div>
+      
+      <div class="warning">
+        <p class="warning-text">
+          <strong>⚠️ Никогда не делитесь этим кодом.</strong><br>
+          Сотрудники QVOR никогда не попросят вас предоставить код авторизации.
+        </p>
+      </div>
+      
+      <p class="text">
+        Если вы не запрашивали этот код, проигнорируйте это письмо или свяжитесь с поддержкой.
+      </p>
+    </div>
+    
+    <div class="footer">
+      <p class="footer-text">
+        Это автоматическое письмо от <strong>QVOR</strong><br>
+        <a href="https://qvor.ru" class="footer-link">qvor.ru</a>
+      </p>
+      <p class="footer-text" style="margin-top: 16px; font-size: 12px; color: #a3a3a3;">
+        © {{YEAR}} QVOR. Все права защищены.
+      </p>
+    </div>
+  </div>
+</body>
+</html>

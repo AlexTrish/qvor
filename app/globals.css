@@ -1,0 +1,380 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-syne);
+  --color-accent-brand: var(--accent-brand);
+  --color-accent-brand-muted: var(--accent-brand-muted);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+}
+
+:root {
+  --accent-brand: oklch(0.75 0.18 55);
+  --accent-brand-hover: oklch(0.70 0.20 55);
+  --accent-brand-muted: oklch(0.75 0.18 55 / 15%);
+
+  --background: oklch(0.99 0 0);
+  --foreground: oklch(0.10 0 0);
+  --card: oklch(0.97 0 0);
+  --card-foreground: oklch(0.10 0 0);
+  --popover: oklch(0.99 0 0);
+  --popover-foreground: oklch(0.10 0 0);
+  --primary: oklch(0.10 0 0);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.94 0 0);
+  --secondary-foreground: oklch(0.10 0 0);
+  --muted: oklch(0.94 0 0);
+  --muted-foreground: oklch(0.50 0 0);
+  --accent: oklch(0.94 0 0);
+  --accent-foreground: oklch(0.10 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.90 0 0);
+  --input: oklch(0.90 0 0);
+  --ring: oklch(0.75 0.18 55);
+  --radius: 0.75rem;
+  --sidebar: oklch(0.97 0 0);
+  --sidebar-foreground: oklch(0.10 0 0);
+  --sidebar-primary: oklch(0.10 0 0);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.94 0 0);
+  --sidebar-accent-foreground: oklch(0.10 0 0);
+  --sidebar-border: oklch(0.90 0 0);
+  --sidebar-ring: oklch(0.75 0.18 55);
+}
+
+.dark {
+  --background: oklch(0.12 0 0);
+  --foreground: oklch(0.96 0 0);
+  --card: oklch(0.17 0 0);
+  --card-foreground: oklch(0.96 0 0);
+  --popover: oklch(0.17 0 0);
+  --popover-foreground: oklch(0.96 0 0);
+  --primary: oklch(0.96 0 0);
+  --primary-foreground: oklch(0.12 0 0);
+  --secondary: oklch(0.22 0 0);
+  --secondary-foreground: oklch(0.96 0 0);
+  --muted: oklch(0.22 0 0);
+  --muted-foreground: oklch(0.62 0 0);
+  --accent: oklch(0.22 0 0);
+  --accent-foreground: oklch(0.96 0 0);
+  --destructive: oklch(0.65 0.20 22);
+  /* Границы в тёмной теме — заметные, но не агрессивные */
+  --border: oklch(1 0 0 / 8%);
+  --input: oklch(1 0 0 / 8%);
+  --ring: oklch(0.75 0.18 55);
+  --sidebar: oklch(0.17 0 0);
+  --sidebar-foreground: oklch(0.96 0 0);
+  --sidebar-primary: oklch(0.96 0 0);
+  --sidebar-primary-foreground: oklch(0.12 0 0);
+  --sidebar-accent: oklch(0.22 0 0);
+  --sidebar-accent-foreground: oklch(0.96 0 0);
+  --sidebar-border: oklch(1 0 0 / 16%);
+  --sidebar-ring: oklch(0.75 0.18 55);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-syne), var(--font-geist-sans), sans-serif;
+    @apply tracking-tight;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: oklch(0.75 0 0 / 30%);
+    border-radius: 99px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.75 0 0 / 50%);
+  }
+  .dark ::-webkit-scrollbar-thumb {
+    background: oklch(1 0 0 / 15%);
+  }
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: oklch(1 0 0 / 25%);
+  }
+}
+
+@layer utilities {
+  .btn-accent {
+    background-color: var(--foreground);
+    color: var(--background);
+  }
+  .btn-accent:hover {
+    opacity: 0.85;
+  }
+
+  /* Тёмная тема: инпуты с видимыми границами */
+  .dark input:not([type='checkbox']):not([type='radio']):not([type='date']):not([type='time']),
+  .dark textarea,
+  .dark select {
+    border-color: oklch(1 0 0 / 22%) !important;
+    background-color: oklch(1 0 0 / 5%);
+    color: oklch(0.96 0 0);
+  }
+  /* Пузыри сообщений — свои сообщения: foreground фон как у btn-accent */
+  .msg-own {
+    background-color: var(--foreground);
+    color: var(--background);
+  }
+  .dark input:not([type='checkbox']):not([type='radio']):focus,
+  .dark textarea:focus {
+    border-color: var(--accent-brand) !important;
+    background-color: oklch(1 0 0 / 7%);
+  }
+  .dark input::placeholder,
+  .dark textarea::placeholder {
+    color: oklch(1 0 0 / 35%);
+  }
+
+  /* Тёмная тема: нативные чекбоксы */
+  .dark input[type='checkbox'] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.25rem;
+    border: 1.5px solid oklch(1 0 0 / 35%);
+    background-color: oklch(1 0 0 / 5%);
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+    transition: background-color 150ms, border-color 150ms;
+  }
+  .dark input[type='checkbox']:checked {
+    background-color: var(--accent-brand);
+    border-color: var(--accent-brand);
+  }
+  .dark input[type='checkbox']:checked::after {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 1px;
+    width: 5px;
+    height: 8px;
+    border: 2px solid oklch(0.12 0 0);
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg);
+  }
+  .dark input[type='checkbox']:focus-visible {
+    outline: 2px solid var(--accent-brand);
+    outline-offset: 2px;
+  }
+
+  /* Тёмная тема: пузыри чужих сообщений */
+  .dark .bubble-incoming {
+    background-color: oklch(0.26 0 0);
+    color: oklch(0.96 0 0);
+  }
+
+  /* Тёмная тема: карточки */
+  .dark .card-elevated {
+    background-color: oklch(0.19 0 0);
+    border-color: oklch(1 0 0 / 12%);
+  }
+
+  /* Тёмная тема: чекбокс без заполнения — видимая рамка */
+  .dark .checkbox-unchecked {
+    border-color: oklch(1 0 0 / 35%) !important;
+    background-color: oklch(1 0 0 / 5%);
+  }
+
+  /* Тёмная тема: dropdown попап — видимая рамка */
+  .dark .dropdown-popup {
+    border-color: oklch(1 0 0 / 20%);
+  }
+
+  /* Тёмная тема: разделитель h-px */
+  .dark .h-px.bg-border {
+    background-color: oklch(1 0 0 / 16%);
+  }
+
+  /* Markdown styles */
+  .inline-code {
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 0.8em;
+    background: oklch(0 0 0 / 12%);
+    border-radius: 4px;
+    padding: 1px 5px;
+  }
+  .dark .inline-code {
+    background: oklch(1 0 0 / 12%);
+  }
+  .block-code {
+    display: block;
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 0.8em;
+    background: oklch(0 0 0 / 10%);
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .dark .block-code {
+    background: oklch(1 0 0 / 8%);
+  }
+  .md-link {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    opacity: 0.85;
+  }
+  .md-link:hover { opacity: 1; }
+  .md-hashtag {
+    color: var(--accent-brand);
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .md-hashtag:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .md-mention {
+    color: var(--accent-brand);
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .md-mention:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  /* React Aria ColorArea / ColorSlider */
+  [data-slot='color-area'] {
+    position: relative;
+    border-radius: 0.75rem;
+    overflow: hidden;
+  }
+  [data-slot='color-area-gradient'] {
+    position: absolute;
+    inset: 0;
+  }
+  [data-slot='color-thumb'] {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    box-sizing: border-box;
+  }
+  [data-slot='slider-track'] {
+    position: relative;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  [data-slot='slider-track'] [data-slot='color-thumb'] {
+    top: 50%;
+  }
+
+  /* Mobile safe area for bottom hotbar */
+  .pb-safe {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
+  .h-safe {
+    height: max(0.5rem, env(safe-area-inset-bottom));
+  }
+  /* Mobile bottom padding to avoid hotbar overlap */
+  .mobile-pb {
+    padding-bottom: 3.5rem;
+  }
+  @media (min-width: 768px) {
+    .mobile-pb {
+      padding-bottom: 0;
+    }
+  }
+  /* Adaptive full height for mobile (dvh fallback) */
+  .h-screen {
+    height: 100vh;
+    height: 100dvh;
+  }
+  .min-h-screen {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+}
+
+@keyframes check {
+  from {
+    stroke-dasharray: 20;
+    stroke-dashoffset: 20;
+  }
+  to {
+    stroke-dasharray: 20;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-transition {
+  animation: page-in 150ms ease-out both;
+}
+
+@keyframes msg-in-own {
+  from { opacity: 0; transform: translateX(12px) scale(0.96); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes msg-in-other {
+  from { opacity: 0; transform: translateX(-12px) scale(0.96); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+.msg-animate-own {
+  animation: msg-in-own 180ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.msg-animate-other {
+  animation: msg-in-other 180ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+

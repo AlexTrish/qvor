@@ -1,0 +1,353 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String    @id @default(uuid())
+  numericId    Int       @unique @default(autoincrement()) @map("numeric_id")
+  phoneHash    String    @unique @map("phone_hash")
+  passwordHash String    @map("password_hash")
+  blob         String
+  blobRecovery String    @map("blob_recovery")
+  recoveryHint String    @map("recovery_hint")
+  publicKey    String    @map("public_key")
+  username     String?   @unique
+  displayName  String?   @map("display_name")
+  bio          String?
+  avatarUrl    String?   @map("avatar_url")
+  bannerConfig String?   @map("banner_config") // JSON: { type, color, gradient, emoji }
+  birthDate    DateTime? @map("birth_date") @db.Date
+  hideOnline       Boolean   @default(false) @map("hide_online")
+  privacySettings  Json?     @map("privacy_settings")
+  isOnline         Boolean   @default(false) @map("is_online")
+  lastSeenAt   DateTime? @map("last_seen_at")
+  telegramId     BigInt?   @unique @map("telegram_id")
+  telegramChatId BigInt?   @unique @map("telegram_chat_id")
+  email          String?   @unique
+  role           UserRole  @default(USER)
+  roles          UserRole[] @default([]) @map("roles")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  sentMessages     Message[]       @relation("SentMessages")
+  receivedMessages Message[]       @relation("ReceivedMessages")
+  channelMembers   ChannelMember[]
+  blockedBy        Block[]         @relation("BlockedBy")
+  blocking         Block[]         @relation("Blocking")
+  photos           Photo[]
+  sentFriendReqs   Friendship[]    @relation("FriendshipSender")
+  receivedFriendReqs Friendship[]  @relation("FriendshipReceiver")
+  reactions        Reaction[]
+  notifications    Notification[]
+  chatFolders      ChatFolder[]
+  chatStates       ChatState[]
+  stories          Story[]
+  storyViews       StoryView[]
+  pushSubscriptions PushSubscription[]
+  followers        Follow[]    @relation("Following") // кто подписан на меня
+  following        Follow[]    @relation("Follower")  // на кого я подписан
+
+  @@map("users")
+}
+
+model Message {
+  id         String    @id @default(uuid())
+  senderId   String    @map("sender_id")
+  receiverId String?   @map("receiver_id") // null если групповое
+  channelId  String?   @map("channel_id")
+  ciphertext String
+  iv         String
+  replyToId  String?   @map("reply_to_id")
+  forwardFrom Json?    @map("forward_from") // { userId, displayName, username }
+  voiceUrl   String?   @map("voice_url")    // URL голосового сообщения
+  voiceDuration Int?   @map("voice_duration") // длительность в секундах
+  callType   String?   @map("call_type")     // 'audio' | 'video' | null
+  callDuration Int?    @map("call_duration") // длительность звонка в секундах (null = пропущен)
+  mediaUrl   String?   @map("media_url")     // URL медиа вложения
+  mediaType  String?   @map("media_type")    // 'image' | 'video' | 'file'
+  mediaName  String?   @map("media_name")    // оригинальное имя файла
+  mediaSize  Int?      @map("media_size")    // размер в байтах
+  createdAt  DateTime  @default(now()) @map("created_at")
+  editedAt   DateTime? @map("edited_at")
+  deletedAt  DateTime? @map("deleted_at")
+
+  sender   User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiver User?    @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  channel  Channel? @relation(fields: [channelId], references: [id])
+  readAt     DateTime? @map("read_at")
+
+  replyTo  Message? @relation("ReplyTo", fields: [replyToId], references: [id])
+  replies  Message[] @relation("ReplyTo")
+  reactions Reaction[]
+
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([channelId])
+  @@index([createdAt])
+  @@map("messages")
+}
+
+model Channel {
+  id          String      @id @default(uuid())
+  name        String
+  description String?
+  avatarUrl   String?     @map("avatar_url")
+  isPrivate   Boolean     @default(false) @map("is_private")
+  type        ChannelType @default(CHANNEL)
+  category    String      @default("other") // news | blogs | memes | other
+  createdAt   DateTime    @default(now()) @map("created_at")
+
+  messages Message[]
+  members  ChannelMember[]
+
+  @@map("channels")
+}
+
+model ChannelMember {
+  id         String      @id @default(uuid())
+  channelId  String      @map("channel_id")
+  userId     String      @map("user_id")
+  role       MemberRole  @default(MEMBER)
+  channelKey String      @map("channel_key")
+  unreadCount Int        @default(0) @map("unread_count")
+  lastReadAt  DateTime?  @map("last_read_at")
+  pinned     Boolean     @default(false)
+  pinnedAt   DateTime?   @map("pinned_at")
+  joinedAt   DateTime    @default(now()) @map("joined_at")
+
+  channel Channel @relation(fields: [channelId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@unique([channelId, userId])
+  @@map("channel_members")
+}
+
+model Block {
+  id        String   @id @default(uuid())
+  blockerId String   @map("blocker_id")
+  blockedId String   @map("blocked_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  blocker User @relation("Blocking", fields: [blockerId], references: [id])
+  blocked User @relation("BlockedBy", fields: [blockedId], references: [id])
+
+  @@unique([blockerId, blockedId])
+  @@map("blocks")
+}
+
+model Photo {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  dataUrl   String   @map("data_url")  // base64 dataURL
+  caption   String   @default("")      // подпись к фото
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("photos")
+}
+
+model Story {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  dataUrl   String   @map("data_url")
+  caption   String?
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user  User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  views StoryView[]
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("stories")
+}
+
+model StoryView {
+  id        String   @id @default(uuid())
+  storyId   String   @map("story_id")
+  userId    String   @map("user_id")
+  viewedAt  DateTime @default(now()) @map("viewed_at")
+
+  story Story @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId],  references: [id], onDelete: Cascade)
+
+  @@unique([storyId, userId])
+  @@map("story_views")
+}
+
+model Follow {
+  id          String   @id @default(uuid())
+  followerId  String   @map("follower_id")  // кто подписался
+  followingId String   @map("following_id") // на кого подписался
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  follower  User @relation("Follower",  fields: [followerId],  references: [id], onDelete: Cascade)
+  following User @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+  @@map("follows")
+}
+
+model Friendship {
+  id         String           @id @default(uuid())
+  senderId   String           @map("sender_id")
+  receiverId String           @map("receiver_id")
+  status     FriendshipStatus @default(PENDING)
+  createdAt  DateTime         @default(now()) @map("created_at")
+  updatedAt  DateTime         @updatedAt @map("updated_at")
+
+  sender   User @relation("FriendshipSender",   fields: [senderId],   references: [id])
+  receiver User @relation("FriendshipReceiver", fields: [receiverId], references: [id])
+
+  @@unique([senderId, receiverId])
+  @@index([receiverId])
+  @@map("friendships")
+}
+
+model Reaction {
+  id        String   @id @default(uuid())
+  messageId String   @map("message_id")
+  userId    String   @map("user_id")
+  emoji     String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId, emoji])
+  @@index([messageId])
+  @@map("reactions")
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  type      String   // 'message' | 'reaction' | 'channel_invite' | 'friend_request'
+  title     String
+  body      String?
+  data      Json?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+model PushSubscription {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("push_subscriptions")
+}
+
+model TempStore {
+  key       String   @id
+  value     String
+  expiresAt DateTime @map("expires_at")
+
+  @@map("temp_store")
+}
+
+// Разделы чатов (как в TG)
+model ChatFolder {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  name      String
+  emoji     String?  // иконка раздела
+  position  Int      @default(0) // порядок
+  // Фильтры
+  filterUnread   Boolean @default(false) @map("filter_unread")
+  filterChannels Boolean @default(false) @map("filter_channels")
+  filterContacts Boolean @default(false) @map("filter_contacts")
+  filterGroups   Boolean @default(false) @map("filter_groups")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chats ChatFolderEntry[]
+
+  @@index([userId])
+  @@map("chat_folders")
+}
+
+// Чат в разделе
+model ChatFolderEntry {
+  id         String   @id @default(uuid())
+  folderId   String   @map("folder_id")
+  userId     String   @map("user_id")    // владелец раздела
+  peerId     String   @map("peer_id")    // id собеседника или канала
+  peerType   String   @map("peer_type")  // 'user' | 'channel'
+  pinned     Boolean  @default(false)
+  pinnedAt   DateTime? @map("pinned_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  folder ChatFolder @relation(fields: [folderId], references: [id], onDelete: Cascade)
+
+  @@unique([folderId, peerId])
+  @@index([folderId])
+  @@map("chat_folder_entries")
+}
+
+// Состояние чата для пользователя
+model ChatState {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  peerId     String   @map("peer_id")
+  peerType   String   @map("peer_type")  // 'user' | 'channel'
+  archived   Boolean  @default(false)
+  pinned     Boolean  @default(false)   // закреп в главном списке
+  pinnedAt   DateTime? @map("pinned_at")
+  unreadCount Int     @default(0) @map("unread_count")
+  lastReadAt DateTime? @map("last_read_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, peerId])
+  @@index([userId])
+  @@map("chat_states")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  MODERATOR
+  TESTER
+  FAMOUS
+  SUPER_ADMIN
+}
+
+enum MemberRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum ChannelType {
+  CHANNEL
+  GROUP
+}
+
+enum FriendshipStatus {
+  PENDING   // заявка отправлена
+  ACCEPTED  // друзья
+  DECLINED  // отклонена
+}
